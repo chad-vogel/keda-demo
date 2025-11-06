@@ -1,0 +1,12 @@
+# OS/filesystem junk
+.DS_Store
+
+# Local tooling binaries
+kind
+
+# .NET build outputs
+bin/
+obj/
+
+# Presentation sources (kept locally)
+*.pptx

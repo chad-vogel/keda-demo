@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: functions-runtime
+  labels:
+    app: functions-runtime
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: functions-runtime
+  template:
+    metadata:
+      labels:
+        app: functions-runtime
+    spec:
+      containers:
+        - name: functions-runtime
+          image: localhost/keda-functions-measure:dev
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: AzureWebJobsStorage
+              value: UseDevelopmentStorage=true
+            - name: FUNCTIONS_WORKER_RUNTIME
+              value: dotnet-isolated
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /api/measure
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/measure
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"

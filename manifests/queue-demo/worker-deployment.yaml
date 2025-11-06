@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue-worker
+  labels:
+    app: queue-worker
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: queue-worker
+  template:
+    metadata:
+      labels:
+        app: queue-worker
+    spec:
+      containers:
+        - name: queue-worker
+          image: localhost/keda-queue-worker:dev
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: Redis__ConnectionString
+              value: redis:6379
+            - name: Queue__QueueKey
+              value: keda-demo-queue
+            - name: Queue__ProcessingDelayMs
+              value: "5000"
+            - name: Queue__PollIntervalMs
+              value: "500"
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"

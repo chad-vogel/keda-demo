@@ -1,0 +1,18 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: queue-worker
+spec:
+  scaleTargetRef:
+    name: queue-worker
+  pollingInterval: 5
+  cooldownPeriod: 30
+  minReplicaCount: 0
+  maxReplicaCount: 10
+  triggers:
+    - type: redis
+      metadata:
+        address: redis.keda-demo.svc:6379
+        listName: keda-demo-queue
+        listLength: "5"
+        activationThreshold: "1"
